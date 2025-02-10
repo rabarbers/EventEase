@@ -1,0 +1,112 @@
+﻿@page "/eventregistration/{eventId:int}"
+@using System.ComponentModel.DataAnnotations
+@using EventEase.Services
+@inject AttendanceService AttendanceService
+@inject NavigationManager NavigationManager
+
+<div class="registration-form">
+    <EditForm Model="@registrationModel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label for="fullName">Full Name:</label>
+            <InputText id="fullName" @bind-Value="registrationModel.FullName" />
+            <ValidationMessage For="@(() => registrationModel.FullName)" />
+        </div>
+
+        <div>
+            <label for="email">Email Address:</label>
+            <InputText id="email" @bind-Value="registrationModel.Email" />
+            <ValidationMessage For="@(() => registrationModel.Email)" />
+        </div>
+
+        <div>
+            <label for="phone">Phone Number:</label>
+            <InputText id="phone" @bind-Value="registrationModel.PhoneNumber" />
+        </div>
+
+        <div>
+            <label for="notes">Additional Notes:</label>
+            <InputTextArea id="notes" @bind-Value="registrationModel.Notes" />
+        </div>
+
+        <button type="submit">Register</button>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    private RegistrationModel registrationModel = new RegistrationModel();
+
+    private async Task HandleValidSubmit()
+    {
+        await AttendanceService.RegisterAttendance(EventId, registrationModel.FullName);
+        NavigationManager.NavigateTo($"/attendance/{EventId}");
+    }
+
+    public class RegistrationModel
+    {
+        [Required(ErrorMessage = "Full Name is required.")]
+        public string FullName { get; set; }
+
+        [Required(ErrorMessage = "Email Address is required.")]
+        [EmailAddress(ErrorMessage = "Invalid Email Address.")]
+        public string Email { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string Notes { get; set; }
+    }
+}
+
+<style>
+    /* Container styling */
+    .registration-form {
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+        /* Style for form fields */
+        .registration-form div {
+            margin-bottom: 15px;
+        }
+
+        /* Label styling */
+        .registration-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* Uniform input and textarea styling */
+        .registration-form input,
+        .registration-form textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Button styling */
+        .registration-form button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .registration-form button:hover {
+                background-color: #0056b3;
+            }
+</style>

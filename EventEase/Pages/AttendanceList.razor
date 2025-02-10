@@ -1,0 +1,36 @@
+﻿@page "/attendance/{eventId:int}"
+@using EventEase.Services
+@inject AttendanceService AttendanceService
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    private List<string> attendanceList = new List<string>();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        attendanceList = await AttendanceService.GetAttendance(EventId);
+        isLoading = false;
+    }
+}
+
+<h3>Attendance List</h3>
+@if (isLoading)
+{
+    <p>Loading attendance...</p>
+}
+else if (attendanceList.Count > 0)
+{
+    <ul>
+        @foreach (var attendee in attendanceList)
+        {
+            <li>@attendee</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No attendees registered for this event yet.</p>
+}

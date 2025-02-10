@@ -1,0 +1,83 @@
+﻿@page "/eventdetails/{eventId:int}"
+@using EventEase.Models
+@using EventEase.Services
+@inject EventService EventService
+@inject NavigationManager NavigationManager
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    private Event eventDetails;
+    private string validationMessage;
+
+    protected override void OnInitialized()
+    {
+        eventDetails = EventService.GetEventById(EventId);
+
+        if (eventDetails == null)
+        {
+            validationMessage = "Event not found. Please go back to the event list.";
+        }
+    }
+
+    private void UpdateEvent()
+    {
+        EventService.UpdateEvent(eventDetails);
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/events");
+    }
+}
+
+@if (eventDetails != null)
+{
+    <EditForm Model="@eventDetails" OnValidSubmit="UpdateEvent">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="event-details">
+            <InputText id="event-name" @bind-Value="eventDetails.EventName" />
+            <ValidationMessage For="@(() => eventDetails.EventName)" />
+
+            <InputText id="event-date" @bind-Value="eventDetails.EventDate" />
+            <ValidationMessage For="@(() => eventDetails.EventDate)" />
+
+            <InputText id="event-location" @bind-Value="eventDetails.EventLocation" />
+            <ValidationMessage For="@(() => eventDetails.EventLocation)" />
+        </div>
+
+        <button type="submit">Save Changes</button>
+        <button type="button" @onclick="GoBack">Back</button>
+    </EditForm>
+}
+else
+{
+    <div class="validation-message">
+        @validationMessage
+    </div>
+    <button type="button" @onclick="GoBack">Back</button>
+}
+
+<style>
+    .event-details {
+        border: 1px solid #ccc;
+        padding: 16px;
+        border-radius: 8px;
+        margin: 8px 0;
+    }
+
+        .event-details input {
+            display: block;
+            margin: 8px 0;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+    .validation-message {
+        color: red;
+    }
+</style>

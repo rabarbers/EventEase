@@ -1,0 +1,48 @@
+﻿@page "/events"
+@using EventEase.Components
+@using EventEase.Models
+@using EventEase.Services
+@inject EventService EventService
+
+@code {
+    private List<Event> events;
+
+    protected override void OnInitialized()
+    {
+        events = EventService.GetEvents();
+    }
+
+    private async ValueTask<ItemsProviderResult<Event>> LoadEvents(ItemsProviderRequest request)
+    {
+        // Simulate async data loading
+        await Task.Delay(50);
+        var items = events.Skip(request.StartIndex).Take(request.Count).ToList();
+        return new ItemsProviderResult<Event>(items, events.Count);
+    }
+}
+
+<div>
+    <Virtualize ItemsProvider="LoadEvents" Context="ev">
+        <EventCard EventName="@ev.EventName" EventDate="@ev.EventDate" EventLocation="@ev.EventLocation" />
+        <a href="/eventdetails/@ev.EventId" class="button">View Details</a>
+        <a href="/eventregistration/@ev.EventId" class="button">Register</a>
+        <a href="/attendance/@ev.EventId" class="button">View Attendance</a>
+    </Virtualize>
+</div>
+
+<style>
+    .button {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 5px;
+        font-size: 16px;
+        color: white;
+        text-decoration: none;
+        background-color: #007bff;
+        border-radius: 5px;
+        text-align: center;
+    }
+    .button:hover {
+        background-color: #0056b3;
+    }
+</style>

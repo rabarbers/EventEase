@@ -1,0 +1,32 @@
+﻿@* EventCard.razor *@
+@code {
+    [Parameter]
+    public string EventName { get; set; }
+
+    [Parameter]
+    public string EventDate { get; set; }
+
+    [Parameter]
+    public string EventLocation { get; set; }
+}
+
+<div class="event-card">
+    <h3>@EventName</h3>
+    <p>Date: @EventDate</p>
+    <p>Location: @EventLocation</p>
+</div>
+
+<style>
+    .event-card {
+        border: 1px solid #ccc;
+        padding: 16px;
+        border-radius: 8px;
+        margin: 8px 0;
+    }
+    .event-card h3 {
+        margin: 0 0 8px 0;
+    }
+    .event-card p {
+        margin: 4px 0;
+    }
+</style>
